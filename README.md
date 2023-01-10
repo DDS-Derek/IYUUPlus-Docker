@@ -9,6 +9,7 @@ docker run -d \
   -e PUID=1000 \
   -e PGID=1000 \
   -e UMASK=022 \
+  -e IYUU_GIT=gitee `#可选github或gitee` \
   --name IYUUPlus \
   --restart=always \
   ddsderek/iyuuplus
@@ -29,6 +30,7 @@ services:
             - "PUID=1000"
             - "PGID=1000"
             - "UMASK=022"
+            - "IYUU_GIT=gitee" # 可选github或gitee
             # - "CRON_UPDATE=0 0 * * *" #如果你需要自定义更新时间可以添加 
         container_name: IYUUPlus
         restart: always

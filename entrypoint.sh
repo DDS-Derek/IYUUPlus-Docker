@@ -4,19 +4,26 @@ Green="\033[32m"
 Red="\033[31m"
 Font="\033[0m"
 
-cd ${IYUU_WORKDIR}
+cd "${IYUU_WORKDIR}"
 
-if [[ -z ${PUID} && -z ${PGID} ]] || [[ ${PUID} = 65534 && ${PGID} = 65534 ]]; then
+if [[ -z "${PUID}" && -z "${PGID}" ]] || [[ "${PUID}" = 65534 && "${PGID}" = 65534 ]]; then
     echo -e "${Red}忽略权限设置。${Font}"
 else
     echo -e "${Green}权限设置...${Font}"
-    groupmod -o -g "$PGID" ${ADD_USER}
-    usermod -o -u "$PUID" ${ADD_USER}
+    groupmod -o -g "$PGID" "${ADD_USER}"
+    usermod -o -u "$PUID" "${ADD_USER}"
+fi
+
+if [ "${IYUU_GIT}" = "gitee" ]; then 
+    IYUU_REPO_URL="https://gitee.com/ledc/iyuuplus.git"
+else 
+    IYUU_REPO_URL="https://github.com/ledccn/IYUUPlus.git"
 fi
 
 if [[ ! -d .git ]]; then
     # git clone https://github.com/ledccn/IYUUPlus.git /tmp/IYUU
-    git clone https://gitee.com/ledc/iyuuplus.git /tmp/IYUU
+    # git clone https://gitee.com/ledc/iyuuplus.git /tmp/IYUU
+    git clone "${IYUU_REPO_URL}" /tmp/IYUU
     find /tmp/IYUU -mindepth 1 -maxdepth 1 | xargs -I {} cp -r {} ${IYUU_WORKDIR}
     rm -rf /tmp/IYUU
 else
@@ -49,10 +56,10 @@ echo -e "${Green}当前crontab如下：${Font}"
 crontab -l
 
 echo -e "${Green}设置目录权限...${Font}"
-chown -R ${PUID}:${PGID} ${IYUU_WORKDIR}
+chown -R "${PUID}":"${PGID}" "${IYUU_WORKDIR}"
 
-umask ${UMASK}
+umask "${UMASK}"
 
-# su-exec ${PUID}:${PGID} php /IYUU/start.php start -d
+# su-exec "${PUID}":"${PGID}" php /IYUU/start.php start -d
 php /IYUU/start.php start -d
 crond -f

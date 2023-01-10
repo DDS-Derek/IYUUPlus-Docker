@@ -7,14 +7,14 @@ FROM alpine:3.15
 # --build-arg timezone=Asia/Shanghai
 ARG timezone
 ARG app_env=prod
-ARG add_user=IYUU
 
-ENV PS1="\[\e[32m\][\[\e[m\]\[\e[36m\]\u \[\e[m\]\[\e[37m\]@ \[\e[m\]\[\e[34m\]\h\[\e[m\]\[\e[32m\]]\[\e[m\] \[\e[37;35m\]in\[\e[m\] \[\e[33m\]\w\[\e[m\] \[\e[32m\][\[\e[m\]\[\e[37m\]\d\[\e[m\] \[\e[m\]\[\e[37m\]\t\[\e[m\]\[\e[32m\]]\[\e[m\] \n\[\e[1;31m\]$ \[\e[0m\]"
-
-ENV APP_ENV=${app_env:-"prod"} \
+ENV PS1="\[\e[32m\][\[\e[m\]\[\e[36m\]\u \[\e[m\]\[\e[37m\]@ \[\e[m\]\[\e[34m\]\h\[\e[m\]\[\e[32m\]]\[\e[m\] \[\e[37;35m\]in\[\e[m\] \[\e[33m\]\w\[\e[m\] \[\e[32m\][\[\e[m\]\[\e[37m\]\d\[\e[m\] \[\e[m\]\[\e[37m\]\t\[\e[m\]\[\e[32m\]]\[\e[m\] \n\[\e[1;31m\]$ \[\e[0m\]" \
+    LANG="C.UTF-8" \
+    APP_ENV=${app_env:-"prod"} \
     TIMEZONE=${timezone:-"Asia/Shanghai"} \
-    ADD_USER=${add_user:-"IYUU"} \
+    ADD_USER=IYUU \
     IYUU_WORKDIR="/IYUU" \
+    IYUU_GIT="gitee" \
     PUID=1000 \
     PGID=1000 \
     UMASK=022
@@ -83,9 +83,12 @@ RUN set -ex \
         php7-zip \
         php7-zlib \
         php7-xml \
-        && git clone https://github.com/ledccn/IYUUPlus.git ${IYUU_WORKDIR} \
+        # && git clone https://github.com/ledccn/IYUUPlus.git ${IYUU_WORKDIR} \
         # && git clone https://gitee.com/ledc/iyuuplus.git ${IYUU_WORKDIR} \
-        && git remote set-url origin https://gitee.com/ledc/iyuuplus.git \
+        # && git remote set-url origin https://gitee.com/ledc/iyuuplus.git \
+        && if [ "${IYUU_GIT}" = "gitee" ]; then IYUU_REPO_URL="https://gitee.com/ledc/iyuuplus.git"; else IYUU_REPO_URL="https://github.com/ledccn/IYUUPlus.git"; fi \
+        && git clone ${IYUU_REPO_URL} ${IYUU_WORKDIR} \
+        && git remote set-url origin ${IYUU_REPO_URL} \
         && git config --global pull.ff only \
         && git config --global --add safe.directory ${IYUU_WORKDIR} \
         && apk del --purge *-dev \
