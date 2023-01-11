@@ -2,12 +2,17 @@
 
 Green="\033[32m"
 Red="\033[31m"
+Yellow="\033[33m"
 Font="\033[0m"
 
 cd "${IYUU_WORKDIR}"
 
-if [[ -z "${PUID}" && -z "${PGID}" ]] || [[ "${PUID}" = 65534 && "${PGID}" = 65534 ]]; then
-    echo -e "${Red}忽略权限设置。${Font}"
+if [[ -z "${PUID}" || -z "${PGID}" ]] || [[ "${PUID}" = 65534 || "${PGID}" = 65534 ]]; then
+    echo -e "${Yellow}忽略权限设置。${Font}"
+    echo -e "${Yellow}使用PUID=0,PGID=0启动。${Font}"
+    PUID=0 && PGID=0
+    groupmod -o -g "$PGID" "${ADD_USER}"
+    usermod -o -u "$PUID" "${ADD_USER}"
 else
     echo -e "${Green}权限设置...${Font}"
     groupmod -o -g "$PGID" "${ADD_USER}"
@@ -57,6 +62,18 @@ crontab -l
 
 echo -e "${Green}设置目录权限...${Font}"
 chown -R "${PUID}":"${PGID}" "${IYUU_WORKDIR}"
+if [ ! -d /torrents ]; then
+    mkdir -p /torrents
+    chown "${PUID}":"${PGID}" /torrents
+else
+    chown "${PUID}":"${PGID}" /torrents
+fi
+if [ ! -d /BT_backup ]; then
+    mkdir -p /BT_backup
+    chown "${PUID}":"${PGID}" /BT_backup
+else
+    chown "${PUID}":"${PGID}" /BT_backup
+fi
 
 umask "${UMASK}"
 
