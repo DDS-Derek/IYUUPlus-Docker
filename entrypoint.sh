@@ -2,19 +2,31 @@
 
 Green="\033[32m"
 Red="\033[31m"
-Yellow="\033[33m"
+Yellow='\033[33m'
 Font="\033[0m"
+INFO="[${Green}INFO${Font}]"
+ERROR="[${Red}ERROR${Font}]"
+WARN="[${Yellow}WARN${Font}]"
+Time=$(date +"%Y-%m-%d %T")
+INFO(){
+echo -e "${Time} ${INFO} ${1}"
+}
+ERROR(){
+echo -e "${Time} ${ERROR} ${1}"
+}
+WARN(){
+echo -e "${Time} ${WARN} ${1}"
+}
 
 cd "${IYUU_WORKDIR}"
 
 if [[ -z "${PUID}" || -z "${PGID}" ]] || [[ "${PUID}" = 65534 || "${PGID}" = 65534 ]]; then
-    echo -e "${Yellow}忽略权限设置。${Font}"
-    echo -e "${Yellow}使用PUID=0,PGID=0启动。${Font}"
+    WARN "忽略权限设置。\n使用PUID=0,PGID=0启动。"
     PUID=0 && PGID=0
     groupmod -o -g "$PGID" "${ADD_USER}"
     usermod -o -u "$PUID" "${ADD_USER}"
 else
-    echo -e "${Green}权限设置...${Font}"
+    INFO "权限设置..."
     groupmod -o -g "$PGID" "${ADD_USER}"
     usermod -o -u "$PUID" "${ADD_USER}"
 fi
@@ -53,14 +65,14 @@ if [[ -z "${CRON_UPDATE}" ]]; then
     CRON_UPDATE="${minute} ${hour_start}-23/${hour_interval} * * *"
 fi
 
-echo -e "${Green}设置cron...${Font}"
+INFO "设置cron..."
 # echo "${CRON_UPDATE} cd ${IYUU_WORKDIR} && git fetch --all && git reset --hard origin/master && git pull && chown -R ${PUID}:${PGID} ${IYUU_WORKDIR} && umask ${UMASK} && su-exec ${PUID}:${PGID} php start.php restart -d" | crontab -
 echo "${CRON_UPDATE} cd ${IYUU_WORKDIR} && git fetch --all && git reset --hard origin/master && git pull && chown -R ${PUID}:${PGID} ${IYUU_WORKDIR} && umask ${UMASK} && php start.php restart -d" | crontab -
 
-echo -e "${Green}当前crontab如下：${Font}"
+INFO "当前crontab如下；"
 crontab -l
 
-echo -e "${Green}设置目录权限...${Font}"
+INFO "设置目录权限..."
 chown -R "${PUID}":"${PGID}" "${IYUU_WORKDIR}"
 if [ ! -d /torrents ]; then
     mkdir -p /torrents
