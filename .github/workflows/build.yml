@@ -45,7 +45,7 @@ jobs:
             linux/ppc64le
             linux/s390x
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
 
       -
         name: Docker Hub Description
