@@ -1,4 +1,4 @@
-FROM alpine:3.17
+FROM alpine:3.15
 
 ##
 # ---------- env settings ----------
@@ -29,7 +29,7 @@ RUN set -ex \
         # && sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/' /etc/apk/repositories \
         # && sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/' /etc/apk/repositories \
         # && apk update \
-        && apk add --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/v3.15/community \
+        && apk add --no-cache \
         # Install base packages ('ca-certificates' will install 'nghttp2-libs')
         ca-certificates \
         curl \
