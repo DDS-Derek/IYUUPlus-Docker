@@ -6,7 +6,7 @@ ENV PS1="\[\e[32m\][\[\e[m\]\[\e[36m\]\u \[\e[m\]\[\e[37m\]@ \[\e[m\]\[\e[34m\]\
     APP_ENV=prod \
     IYUU_REPO_URL="https://gitee.com/ledc/iyuuplus-dev.git"
 
-RUN set -ex \
+RUN set -ex && \
     apk add --no-cache \
         curl \
         bash \
