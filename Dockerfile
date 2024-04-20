@@ -46,9 +46,6 @@ RUN set -ex && \
     php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
     echo -e "upload_max_filesize=100M\npost_max_size=108M\nmemory_limit=1024M\ndate.timezone=${TZ}\n" > /etc/php83/conf.d/99-overrides.ini && \
     echo -e "[opcache]\nopcache.enable=1\nopcache.enable_cli=1" >> /etc/php83/conf.d/99-overrides.ini && \
-    git config --global pull.ff only && \
-    git config --global --add safe.directory /iyuu && \
-    git clone --depth 1 ${IYUU_REPO_URL} /iyuu && \
     rm -rf /var/cache/apk/* /tmp/*
 
 RUN set -ex && \
@@ -58,8 +55,14 @@ RUN set -ex && \
     sed -i "s/skip-networking/#skip-networking/g" /etc/my.cnf.d/mariadb-server.cnf && \
     rm -rf /var/cache/apk/* /tmp/*
 
+RUN set -ex && \
+    git config --global pull.ff only && \
+    git config --global --add safe.directory /iyuu && \
+    git clone --depth 1 ${IYUU_REPO_URL} /iyuu
+
 COPY --chmod=755 ./rootfs /
 
 VOLUME [ "/iyuu" ]
+VOLUME [ "/data" ]
 
 ENTRYPOINT ["/init"]
