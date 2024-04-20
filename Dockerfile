@@ -51,6 +51,13 @@ RUN set -ex && \
     git clone --depth 1 ${IYUU_REPO_URL} /iyuu && \
     rm -rf /var/cache/apk/* /tmp/*
 
+RUN set -ex && \
+    apk add --no-cache \
+        mysql \
+        mysql-client && \
+    sed -i "s/skip-networking/#skip-networking/g" /etc/my.cnf.d/mariadb-server.cnf && \
+    rm -rf /var/cache/apk/* /tmp/*
+
 COPY --chmod=755 ./rootfs /
 
 VOLUME [ "/iyuu" ]
