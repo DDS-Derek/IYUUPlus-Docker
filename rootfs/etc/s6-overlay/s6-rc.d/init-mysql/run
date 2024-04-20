@@ -40,3 +40,5 @@ if [ ! -d /data/iyuu ]; then
 
     rm -rf "$mysql_set_file"
 fi
+
+chown -R mysql:mysql /data
